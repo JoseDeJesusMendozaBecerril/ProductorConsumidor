@@ -18,11 +18,10 @@ int** matrizPerfiles;
 int* perfilObtenido;
 
 
-
 //Variables compartidas
 int bestScore;
 
-
+int nuevaVar;
 
 int main(){
   FILE *fichero;
@@ -72,7 +71,6 @@ int main(){
 
   bestScore = calcularScore(S ,cadenasADN,tamMotivo,numCadenasADN);
   printf("\nPuntaje \n%d\n",bestScore );
-  //S = encontrarMotivos(cadenasADN,tamMotivo);
 
 
       return 0;
