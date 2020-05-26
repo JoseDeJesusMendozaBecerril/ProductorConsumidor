@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-
 #define SIZE_UNIVERSO 4
 //Prototipos de funciones
 int calcularScore(int* s , char** adn, int tamMotivo, int numCadenasADN);
@@ -13,17 +12,9 @@ int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN); //l longitud
 void imprimirS(int* S, int numCadenasADN);
 
 //Variables globales
-
-
-
 int tamADN;
-
-
-
 char** cadenasADN;
-
 int** matrizPerfiles;
-
 int* perfilObtenido;
 
 
