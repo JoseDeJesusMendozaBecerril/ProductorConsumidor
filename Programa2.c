@@ -9,7 +9,7 @@
 //Prototipos de funciones
 int calcularScore(int* s , char** adn, int tamMotivo, int numCadenasADN);
 int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN); //l longitud patron oculto regresa el mejor s
-void imprimirS(int* S, int numCadenasADN);
+void imprimirS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
 
 //Variables globales
 int tamADN;
@@ -67,7 +67,7 @@ int main(){
   S[1] = 0;
   S[2] = 0;
   printf("\nImprimimos S\n" );
-  imprimirS(S,numCadenasADN);
+  imprimirS(S,numCadenasADN,0,3);// el ultimo valor tiene que ser n-l+1
   printf("\n\n" );
 
   bestScore = calcularScore(S ,cadenasADN,tamMotivo,numCadenasADN);
@@ -93,10 +93,17 @@ return s;
 
 
 
-void imprimirS(int* S, int numCadenasADN){
-  for(int i = 0; i < numCadenasADN; i++){
-    printf("%d ",S[i]);
-  }
+void imprimirS(int* a, int t, int start, int n){
+    if(start==t){
+        for(int i=0;i<t;i++) printf("%d ", a[i]);
+        printf("\n");
+    }
+    else{
+        for(int i=0; i<n; i++){
+            a[start]=i;
+            combinations(a, t, start+1,n);
+        }
+    }
 }
 
 
