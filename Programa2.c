@@ -71,7 +71,7 @@ int main(){
 
   bestScore = calcularScore(S ,cadenasADN,tamMotivo,numCadenasADN);
   printf("\nPuntaje \n%d\n",bestScore );
-
+  S = encontrarMotivos(cadenasADN,tamMotivo);
 
       return 0;
 }
