@@ -29,7 +29,7 @@ int main(){
   fichero = fopen("data.txt", "r");
   //TAM MOTIVO
   int tamMotivo; fscanf(fichero, "%d", &tamMotivo); printf("Tam Motivo(L): %d\n",tamMotivo);
-
+  int l=tamMotivo;
   //MOTIVO
   char* motivo; motivo = (char*)malloc(tamMotivo*sizeof(char));
   fscanf(fichero, "%s",motivo); printf("Motivo: %s\n",motivo);
@@ -100,8 +100,9 @@ void imprimirS(int* a, int t, int start, int n){
     }
     else{
         for(int i=0; i<n; i++){
+
             a[start]=i;
-            combinations(a, t, start+1,n);
+            imprimirS(a, t, start+1,n);
         }
     }
 }
