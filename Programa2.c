@@ -9,7 +9,12 @@
 //Prototipos de funciones
 int calcularScore(int* s , char** adn, int tamMotivo, int numCadenasADN);
 int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN); //l longitud patron oculto regresa el mejor s
-void imprimirS(int* S, int numCadenasADN);
+void generaS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
+typedef struct Elemento {
+    char *dato;
+    struct ElementoLista *siguiente;
+}Elemento;
+
 
 //Variables globales
 int tamADN;
@@ -18,10 +23,11 @@ int** matrizPerfiles;
 int* perfilObtenido;
 
 
+
 //Variables compartidas
 int bestScore;
 
-int nuevaVar;
+
 
 int main(){
   FILE *fichero;
@@ -66,39 +72,31 @@ int main(){
   S[1] = 0;
   S[2] = 0;
   printf("\nImprimimos S\n" );
-  imprimirS(S,numCadenasADN);
+  generaS(S,numCadenasADN,0,3);// el ultimo valor tiene que ser n-l+1
   printf("\n\n" );
 
   bestScore = calcularScore(S ,cadenasADN,tamMotivo,numCadenasADN);
   printf("\nPuntaje \n%d\n",bestScore );
-  S = encontrarMotivos(cadenasADN,tamMotivo);
+  //S = encontrarMotivos(cadenasADN,tamMotivo);
+
 
       return 0;
 }
-
-int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN){
-  int* s;
-  int acarreo = 1;
-  int posicion = numCadenasADN - 1;
-
-  s = (int*) malloc(numCadenasADN*sizeof(int));
-  int limite = pow ((tamADN - tamMotivo) +1 ,numCadenasADN); //(n-l+1)^t
-  for(int i = 0; i < limite; i++){
-
-  }
-return s;
+void generaS(int* a, int t, int start, int n){ //Esta funcion será usada por el productor
+    if(start==t){
+        for(int i=0;i<t;i++) printf("%d ", a[i]);
+        printf("\n");
+    }
+    else{
+        for(int i=0; i<n; i++){
+            a[start]=i;
+            generaS(a, t, start+1,n);
+        }
+    }
 }
 
 
-
-void imprimirS(int* S, int numCadenasADN){
-  for(int i = 0; i < numCadenasADN; i++){
-    printf("%d ",S[i]);
-  }
-}
-
-
-int calcularScore(int* s,char** cadenasADN, int tamMotivo, int numCadenasADN){ //en s vienen los numeros
+int calcularScore(int* s,char** cadenasADN, int tamMotivo, int numCadenasADN){ //Esta funcion sera usada por Consumidor
   int inicioExtraccion = 0;
   for(int i = 0; i < numCadenasADN; i++){
     inicioExtraccion = s[i];
@@ -141,3 +139,15 @@ printf("\n" );
 
   return puntaje;
 }
+
+/*
+int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN){
+  int* s;
+  s = (int*) malloc(numCadenasADN*sizeof(int));
+  int limite = pow ((tamADN - tamMotivo) +1 ,numCadenasADN); //(n-l+1)^t
+
+return s;
+}
+*/
+
+//---LISTA CIRCULAR OPERACIONES
