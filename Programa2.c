@@ -115,7 +115,7 @@ void generaS(int* a, int t, int start, int n){
       sem_wait(&mutex);
       int* new=(int*)malloc(t*sizeof(int));
       memcpy(new,a,t*sizeof(int));
-      for(int i=0;i<t;i++) printf("%d", new[]);
+      for(int i=0;i<t;i++) printf("%d", new[i]);
       printf("\n");
       while (isFull(buffer));
       enqueue(buffer,new);
@@ -211,18 +211,18 @@ void Consummer(){
 
   sem_wait(&mutex);
   while (hechosC!=totales+1){
-    int lc=hechosC;
-    hechosC++;
     sem_post(&mutex);
+    while(isEmpty(buffer));
 
     sem_wait(&full);
     sem_wait(&mutex);
-    int* a;
-    a=dequeue(buffer);
+    int* a=dequeue(buffer);
+    
     int* new=(int*)malloc(numCadenasADN*sizeof(int));
-    //memcpy(new,a,numCadenasADN*sizeof(int));
-    //for(int i=0;i<numCadenasADN;i++) printf("%d", new[i]);
-    //printf("\n");
+    memcpy(new,a,numCadenasADN*sizeof(int));
+    for(int i=0;i<numCadenasADN;i++) printf("%d", a[0]);
+    printf("\n");
+    hechosC++;
     sem_post(&mutex);
     sem_post(&empty);
   sem_wait(&mutex);
