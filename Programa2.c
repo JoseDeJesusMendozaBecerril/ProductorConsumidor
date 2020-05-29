@@ -4,9 +4,11 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "Queue.h"
 
 #define SIZE_UNIVERSO 4
+
 //Prototipos de funciones
 int calcularScore(int* s , int** matrizPerfiles);
 int* encontrarMotivos(char** adn, int numCadenasADN); //l longitud patron oculto regresa el mejor s
@@ -21,6 +23,9 @@ int numCadenasADN;
 char** cadenasADN;
 int* perfilObtenido;//mejor conjunto de S
 int hechosP=0,hechosC,totales;
+int tamBuffer=10000000;
+
+struct Queue* buffer;
 sem_t empty,full,mutex;
 
 
@@ -34,7 +39,7 @@ int main(int argc, char const *argv[]){
   char* motivo; 
   int n;
   int t;
-  int tamBuffer=10;
+  buffer=createQueue(tamBuffer);
   sem_init(&empty,0,tamBuffer);
   sem_init(&full,0,1);
   sem_init(&mutex,0,1);
@@ -108,9 +113,13 @@ void generaS(int* a, int t, int start, int n){
       hechosP++;
       sem_wait(&empty);
       sem_wait(&mutex);
-      for(int i=0;i<t;i++) printf("%d", a[i]);
-        printf("\n");
-
+      int* new=(int*)malloc(t*sizeof(int));
+      memcpy(new,a,t*sizeof(int));
+      for(int i=0;i<t;i++) printf("%d", new[]);
+      printf("\n");
+      while (isFull(buffer));
+      enqueue(buffer,new);
+      //dequeue(buffer);
       sem_post(&mutex);
       sem_post(&full);
       //sale de cola
@@ -190,30 +199,37 @@ int calcularScore(int* s, int** matrizPerfiles){ //en s vienen los numeros
 
 
 void Consummer(){
+    //Arreglo para maximos de perfilesAlineados
+  int* maximos = calloc (tamMotivo ,sizeof(int));
+  int* S;
+  // Matriz temporal para perfilesAlineados
+  int **matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
+  for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
+ /*
+  * Entra a cola para sacar S
+  */
+
   sem_wait(&mutex);
-  while (hechosC!=totales){
+  while (hechosC!=totales+1){
+    int lc=hechosC;
     hechosC++;
     sem_post(&mutex);
 
     sem_wait(&full);
     sem_wait(&mutex);
-
+    int* a;
+    a=dequeue(buffer);
+    int* new=(int*)malloc(numCadenasADN*sizeof(int));
+    //memcpy(new,a,numCadenasADN*sizeof(int));
+    //for(int i=0;i<numCadenasADN;i++) printf("%d", new[i]);
+    //printf("\n");
     sem_post(&mutex);
     sem_post(&empty);
   sem_wait(&mutex);
   }
   sem_post(&mutex);
   /*
-  int** matrizPerfiles;
-    //Arreglo para maximos de perfilesAlineados
-  int* maximos = calloc (tamMotivo ,sizeof(int));
-  int* S;
-  // Matriz temporal para perfilesAlineados
-  matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
-  for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
- /*
-  * Entra a cola para sacar S
-  * 
+ 
   
 
   bestScore = calcularScore(S ,matrizPerfiles);
