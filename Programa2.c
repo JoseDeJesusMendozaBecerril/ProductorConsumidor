@@ -168,7 +168,7 @@ int calcularScore(int* s){ //en s vienen los numeros
       inicioExtraccion++;
     }
   }
-
+  /*
   //Imprimo perfiles alineados
   printf("Perfiles alineados\n");
   for(int i=0; i < SIZE_UNIVERSO; i++ ){
@@ -178,7 +178,7 @@ int calcularScore(int* s){ //en s vienen los numeros
     printf("\n" );
   }
   printf("\n" );
-
+  */
   //Sumar valores para obtener el maximo de cada columna y sacar el score
   //printf("Valores maximos de cada columna\n");
   for(int i = 0; i < SIZE_UNIVERSO; i++){
@@ -191,10 +191,10 @@ int calcularScore(int* s){ //en s vienen los numeros
     }
   }
 
-  printf("Extraccion de valores que mas repiten \n");
+  //printf("Extraccion de valores que mas repiten \n");
   int puntaje=0;
   for(int i = 0; i < tamMotivo; i++){
-    printf("%d ",perfilObtenido[i] );
+    //printf("%d ",perfilObtenido[i] );
     puntaje+=perfilObtenido[i];
   }
   printf("\n" );
@@ -211,8 +211,6 @@ void Consummer(){
  /*
   * Entra a cola para sacar S
   */
-
-    printf("_%d_cc\n",hechosC);
   sem_wait(&mutex);
   while (!debeSalir){
     sem_post(&mutex);
@@ -233,7 +231,7 @@ void Consummer(){
     sem_post(&empty);
     int locScore= calcularScore(S);
     if (locScore>bestScore)bestScore=locScore;
-    printf("\nPuntaje \n%d\n",bestScore );
+    printf("%d_Puntaje %d\n",hechosC,bestScore );
     S = encontrarMotivos(cadenasADN,tamMotivo);
   sem_wait(&mutex);
   if(hechosC==totales) {
