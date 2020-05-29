@@ -35,7 +35,7 @@ int main(){
   fichero = fopen("data.txt", "r");
   //TAM MOTIVO
   int tamMotivo; fscanf(fichero, "%d", &tamMotivo); printf("Tam Motivo(L): %d\n",tamMotivo);
-
+  int l=tamMotivo;
   //MOTIVO
   char* motivo; motivo = (char*)malloc(tamMotivo*sizeof(char));
   fscanf(fichero, "%s",motivo); printf("Motivo: %s\n",motivo);
@@ -84,15 +84,16 @@ int main(){
       return 0;
 }
 
-void generaS(int* a, int t, int start, int n){ //Esta funcion será usada por el productor
+void imprimirS(int* a, int t, int start, int n){ //Esta funcion será usada por el productor
     if(start==t){
         for(int i=0;i<t;i++) printf("%d ", a[i]);
         printf("\n");
     }
     else{
         for(int i=0; i<n; i++){
+
             a[start]=i;
-            generaS(a, t, start+1,n);
+            imprimirS(a, t, start+1,n);
         }
     }
 }
