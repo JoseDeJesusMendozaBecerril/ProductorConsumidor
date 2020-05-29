@@ -197,7 +197,7 @@ int calcularScore(int* s){ //en s vienen los numeros
     //printf("%d ",perfilObtenido[i] );
     puntaje+=perfilObtenido[i];
   }
-  printf("\n" );
+  //printf("\n" );
   return puntaje;
 }
 
@@ -230,8 +230,11 @@ void Consummer(){
     sem_post(&mutex);
     sem_post(&empty);
     int locScore= calcularScore(S);
-    if (locScore>bestScore)bestScore=locScore;
-    printf("%d_Puntaje %d\n",hechosC,bestScore );
+    if (locScore>bestScore){
+      bestScore=locScore;
+      printf("BS:_%d\n",bestScore);
+    }
+    //printf("%d_Puntaje %d\n",hechosC,bestScore );
     S = encontrarMotivos(cadenasADN,tamMotivo);
   sem_wait(&mutex);
   if(hechosC==totales) {
