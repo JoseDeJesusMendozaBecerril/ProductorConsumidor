@@ -10,6 +10,7 @@
 int calcularScore(int* s , char** adn, int tamMotivo, int numCadenasADN);
 int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN); //l longitud patron oculto regresa el mejor s
 void generaS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
+
 typedef struct Elemento {
     char *dato;
     struct ElementoLista *siguiente;
@@ -82,6 +83,7 @@ int main(){
 
       return 0;
 }
+
 void generaS(int* a, int t, int start, int n){ //Esta funcion será usada por el productor
     if(start==t){
         for(int i=0;i<t;i++) printf("%d ", a[i]);
@@ -149,5 +151,3 @@ int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN){
 return s;
 }
 */
-
-//---LISTA CIRCULAR OPERACIONES
