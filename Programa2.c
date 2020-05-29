@@ -222,3 +222,12 @@ void Consummer(){
   
 */
 }
+/*
+int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN){
+  int* s;
+  s = (int*) malloc(numCadenasADN*sizeof(int));
+  int limite = pow ((tamADN - tamMotivo) +1 ,numCadenasADN); //(n-l+1)^t
+
+return s;
+}
+*/
