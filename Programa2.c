@@ -11,7 +11,7 @@
 #define NUM_THREADS 3
 
 //Prototipos de funciones
-int calcularScore(int* s , int** matrizPerfiles);
+int calcularScore(int* s );
 int* encontrarMotivos(char** adn, int numCadenasADN); //l longitud patron oculto regresa el mejor s
 void imprimirS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
 void generaS(int* a, int t, int start, int n);
@@ -154,7 +154,9 @@ void imprimirS(int* a, int t, int start, int n){
 }
 
 
-int calcularScore(int* s, int** matrizPerfiles){ //en s vienen los numeros
+int calcularScore(int* s){ //en s vienen los numeros
+  int **matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
+  for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
   int inicioExtraccion = 0;
   for(int i = 0; i < numCadenasADN; i++){
     inicioExtraccion = s[i];
@@ -205,8 +207,7 @@ void Consummer(){
   int* maximos = calloc (tamMotivo ,sizeof(int));
   int* S;
   // Matriz temporal para perfilesAlineados
-  int **matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
-  for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
+  
  /*
   * Entra a cola para sacar S
   */
@@ -230,7 +231,7 @@ void Consummer(){
     
     sem_post(&mutex);
     sem_post(&empty);
-    int locScore= calcularScore(S ,matrizPerfiles);
+    int locScore= calcularScore(S);
     if (locScore>bestScore)bestScore=locScore;
     printf("\nPuntaje \n%d\n",bestScore );
     S = encontrarMotivos(cadenasADN,tamMotivo);
