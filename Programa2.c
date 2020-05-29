@@ -8,6 +8,7 @@
 #include "Queue.h"
 
 #define SIZE_UNIVERSO 4
+#define NUM_THREADS 3
 
 //Prototipos de funciones
 int calcularScore(int* s , int** matrizPerfiles);
@@ -17,6 +18,7 @@ void generaS(int* a, int t, int start, int n);
 void Consummer();
 
 //Variables globales
+int debeSalir=0;
 int tamADN;
 int tamMotivo;
 int numCadenasADN;
@@ -80,10 +82,10 @@ int main(int argc, char const *argv[]){
   int* S=(int*)calloc(t,sizeof(int));
   //Empieza productor
   //termina productor
-  pthread_t cons[4];
-  for(int i=0;i<1;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
+  pthread_t cons[NUM_THREADS];
+  for(int i=0;i<NUM_THREADS;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
   generaS(S,t,0,n-l+1);
-  for(int i=0;i<1;i++) pthread_join(cons[i], NULL);
+  for(int i=0;i<NUM_THREADS;i++) pthread_join(cons[i], NULL);
 
   sem_destroy(&empty);
   sem_destroy(&full);
@@ -115,8 +117,8 @@ void generaS(int* a, int t, int start, int n){
       sem_wait(&mutex);
       int* new=(int*)malloc(t*sizeof(int));
       memcpy(new,a,t*sizeof(int));
-      for(int i=0;i<t;i++) printf("%d", new[i]);
-      printf("\n");
+      //for(int i=0;i<t;i++) printf("%d", new[i]);
+      //printf("\n");
       while (isFull(buffer));
       enqueue(buffer,new);
       //dequeue(buffer);
@@ -211,26 +213,37 @@ void Consummer(){
 
     printf("_%d_cc\n",hechosC);
   sem_wait(&mutex);
-  while (hechosC!=totales+1){
-
+  while (!debeSalir){
     sem_post(&mutex);
 
     sem_wait(&full);
     sem_wait(&mutex);
     int* a=dequeue(buffer);
     
-    int* new=(int*)malloc(numCadenasADN*sizeof(int));
-    if(a!=NULL){memcpy(new,a,numCadenasADN*sizeof(int));
-    hechosC++;
+    S=(int*)malloc(numCadenasADN*sizeof(int));
+    if(a!=NULL){
+      memcpy(S,a,numCadenasADN*sizeof(int));
+      hechosC++;
     }
-    //for(int i=0;i<numCadenasADN;i++) printf("%d", new[i]);
+    //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
     //printf("_%d_c\n",hechosC);
     
     sem_post(&mutex);
     sem_post(&empty);
-  if(hechosC==totales) break;
+    bestScore = calcularScore(S ,matrizPerfiles);
+    printf("\nPuntaje \n%d\n",bestScore );
+    S = encontrarMotivos(cadenasADN,tamMotivo);
   sem_wait(&mutex);
+  if(hechosC==totales) {
+    debeSalir=1;
+    sem_post(&mutex);
+    sem_post(&mutex);
+    sem_post(&mutex);
+    sem_post(&mutex);
+    sem_post(&mutex);
   }
+  }
+
   printf("_%d_c\n",hechosC);
   /*
  
