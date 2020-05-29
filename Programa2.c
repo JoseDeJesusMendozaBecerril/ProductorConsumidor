@@ -11,7 +11,7 @@
 int calcularScore(int* s , int** matrizPerfiles);
 int* encontrarMotivos(char** adn, int numCadenasADN); //l longitud patron oculto regresa el mejor s
 void imprimirS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
-void getVectorS(int* a, int t, int start, int n);
+void generaS(int* a, int t, int start, int n);
 void Consummer();
 
 //Variables globales
@@ -77,7 +77,7 @@ int main(int argc, char const *argv[]){
   //termina productor
   pthread_t cons[4];
   for(int i=0;i<4;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
-  getVectorS(S,t,0,n-l+1);
+  generaS(S,t,0,n-l+1);
   for(int i=0;i<4;i++) pthread_join(cons[i], NULL);
 
   sem_destroy(&empty);
@@ -100,7 +100,7 @@ int* encontrarMotivos(char** adn, int numCadenasADN){
 return s;
 }
 
-void getVectorS(int* a, int t, int start, int n){
+void generaS(int* a, int t, int start, int n){
   if(start==t){
     //entra para insertar a cola
     //Decide primero si termina
@@ -122,7 +122,7 @@ void getVectorS(int* a, int t, int start, int n){
   else{
     for(int i=0; i<n; i++){
       a[start]=i;
-      getVectorS(a, t, start+1,n);
+      generaS(a, t, start+1,n);
     }
   }
 }
