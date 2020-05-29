@@ -230,7 +230,8 @@ void Consummer(){
     
     sem_post(&mutex);
     sem_post(&empty);
-    bestScore = calcularScore(S ,matrizPerfiles);
+    int locScore= calcularScore(S ,matrizPerfiles);
+    if (locScore>bestScore)bestScore=locScore;
     printf("\nPuntaje \n%d\n",bestScore );
     S = encontrarMotivos(cadenasADN,tamMotivo);
   sem_wait(&mutex);
