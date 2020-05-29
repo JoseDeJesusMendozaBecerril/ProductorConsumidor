@@ -81,9 +81,9 @@ int main(int argc, char const *argv[]){
   //Empieza productor
   //termina productor
   pthread_t cons[4];
-  for(int i=0;i<4;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
+  for(int i=0;i<1;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
   generaS(S,t,0,n-l+1);
-  for(int i=0;i<4;i++) pthread_join(cons[i], NULL);
+  for(int i=0;i<1;i++) pthread_join(cons[i], NULL);
 
   sem_destroy(&empty);
   sem_destroy(&full);
@@ -209,25 +209,29 @@ void Consummer(){
   * Entra a cola para sacar S
   */
 
+    printf("_%d_cc\n",hechosC);
   sem_wait(&mutex);
   while (hechosC!=totales+1){
+
     sem_post(&mutex);
-    while(isEmpty(buffer));
 
     sem_wait(&full);
     sem_wait(&mutex);
     int* a=dequeue(buffer);
     
     int* new=(int*)malloc(numCadenasADN*sizeof(int));
-    memcpy(new,a,numCadenasADN*sizeof(int));
-    for(int i=0;i<numCadenasADN;i++) printf("%d", a[0]);
-    printf("\n");
+    if(a!=NULL){memcpy(new,a,numCadenasADN*sizeof(int));
     hechosC++;
+    }
+    //for(int i=0;i<numCadenasADN;i++) printf("%d", new[i]);
+    //printf("_%d_c\n",hechosC);
+    
     sem_post(&mutex);
     sem_post(&empty);
+  if(hechosC==totales) break;
   sem_wait(&mutex);
   }
-  sem_post(&mutex);
+  printf("_%d_c\n",hechosC);
   /*
  
   
