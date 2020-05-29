@@ -25,7 +25,8 @@ int numCadenasADN;
 char** cadenasADN;
 int* perfilObtenido;//mejor conjunto de S
 int hechosP=0,hechosC,totales;
-int tamBuffer=10000000;
+int tamBuffer=10;
+int* mejorS;
 
 struct Queue* buffer;
 sem_t empty,full,mutex;
@@ -61,6 +62,7 @@ int main(int argc, char const *argv[]){
   cadenasADN = (char**)malloc(numCadenasADN*sizeof(char*));
   for(int i=0; i < numCadenasADN; i++){ cadenasADN[i] =(char*) malloc(tamADN*sizeof(char));}
   for(int i = 0; i < numCadenasADN; i++ ){ fscanf(fichero, "%s",cadenasADN[i]);}
+  mejorS=(int*)malloc(numCadenasADN*sizeof(int));
 
   printf("Tam Motivo(L): %d\n",tamMotivo);
   printf("Motivo: %s\n",motivo);
@@ -86,7 +88,9 @@ int main(int argc, char const *argv[]){
   for(int i=0;i<NUM_THREADS;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
   generaS(S,t,0,n-l+1);
   for(int i=0;i<NUM_THREADS;i++) pthread_join(cons[i], NULL);
-
+  printf("mejor Score: %d\n",bestScore);
+  for(int i=0;i<numCadenasADN;i++) printf("%d ", mejorS[i]);
+  printf("\n");
   sem_destroy(&empty);
   sem_destroy(&full);
   sem_destroy(&mutex);
@@ -224,14 +228,15 @@ void Consummer(){
       memcpy(S,a,numCadenasADN*sizeof(int));
       hechosC++;
     }
-    //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
-    //printf("_%d_c\n",hechosC);
     
     sem_post(&mutex);
     sem_post(&empty);
     int locScore= calcularScore(S);
     if (locScore>bestScore){
       bestScore=locScore;
+      mejorS=S;
+    for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
+    printf("_%d_c\n",hechosC);
       printf("BS:_%d\n",bestScore);
     }
     //printf("%d_Puntaje %d\n",hechosC,bestScore );
