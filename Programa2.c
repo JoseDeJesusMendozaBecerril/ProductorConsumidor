@@ -4,12 +4,13 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <math.h>
+#include "Queue.h"
 
 #define SIZE_UNIVERSO 4
 //Prototipos de funciones
 int calcularScore(int* s , char** adn, int tamMotivo, int numCadenasADN);
 int* encontrarMotivos(char** adn,int tamMotivo, int numCadenasADN); //l longitud patron oculto regresa el mejor s
-void generaS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
+void imprimirS(int* a, int t, int start, int n); //arreglo que se usara, numero de cadenas, start es 0, n es la longitud de la cadena
 
 typedef struct Elemento {
     char *dato;
@@ -73,12 +74,16 @@ int main(){
   S[1] = 0;
   S[2] = 0;
   printf("\nImprimimos S\n" );
-  generaS(S,numCadenasADN,0,3);// el ultimo valor tiene que ser n-l+1
+  imprimirS(S,numCadenasADN,0,3);// el ultimo valor tiene que ser n-l+1
   printf("\n\n" );
 
   bestScore = calcularScore(S ,cadenasADN,tamMotivo,numCadenasADN);
   printf("\nPuntaje \n%d\n",bestScore );
   //S = encontrarMotivos(cadenasADN,tamMotivo);
+
+  Queue cola = newQueue(5); //buffer de 5 elements
+  enqueue(cola,S);
+  //printf("%d\n",cola. );
 
 
       return 0;

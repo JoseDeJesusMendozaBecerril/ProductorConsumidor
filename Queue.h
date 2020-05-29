@@ -2,6 +2,9 @@ typedef struct {
     int front, rear,capacity,elements;
     int* q;
 }Queue;
+int qIsFull(Queue q){
+    return q.elements==q.capacity;
+}
 
 Queue newQueue(int capacity){
     Queue new;
@@ -17,9 +20,9 @@ Queue deleteQueue(Queue toDelete){
 void enqueue(Queue q, int* data){
     if(!qIsFull(q)){
         if(q.rear == q.capacity-1) {
-          q.rear = -1;            
-        }  
-        q.q[++q.rear]=data;
+          q.rear = -1;
+        }
+        q.q[++q.rear] = data;
         q.elements++;
     }
 }
@@ -38,9 +41,7 @@ int qPeek(Queue q) {
 int qIsEmpty(Queue q){
     return q.elements==0;
 }
-int qIsFull(Queue q){
-    return q.elements==q.capacity;
-}
+
 int qSize(Queue q){
     return q.elements;
 }
