@@ -158,6 +158,13 @@ void imprimirMotivo(int* s){
 int calcularScore(int* s){ //en s vienen los numeros
   int **matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
   for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
+
+  for (int i = 0; i < SIZE_UNIVERSO; i++) {
+      for(int j = 0; j < tamMotivo; j++){
+          matrizPerfiles[i][j] = 0;
+      }
+  }
+
   for (int i = 0; i < numCadenasADN; i++){
     for (int j = 0; j < tamMotivo; j++){
       matrizPerfiles[i][j] = 0;
@@ -188,7 +195,7 @@ int calcularScore(int* s){ //en s vienen los numeros
   //Sumar valores para obtener el maximo de cada columna y sacar el score
 //  printf("Valores maximos de cada columna\n");
   for (int i = 0; i < tamMotivo; i++){
-    perfilObtenido[i]=0;
+    perfilObtenido[i] = 0;
   }
 
   for(int i = 0; i < SIZE_UNIVERSO; i++){
@@ -249,13 +256,14 @@ void Consummer(){
 
     //printf("\n");
 
-
+    sem_wait(&mutex);
     if (locScore>bestScore){
       bestScore=locScore;
       printf("BS:_%d",bestScore);
       imprimirMotivo(S);
       printf("\n");
     }
+    sem_post(&mutex);
 
 
   sem_wait(&mutex);
