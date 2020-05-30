@@ -48,7 +48,7 @@ int main(int argc, char const *argv[]){
   sem_init(&mutex,0,1);
 
   if(argc>1) fichero = fopen(argv[1], "r");
-  else fichero = fopen("data.dat", "r");
+  else fichero = fopen("datosPrueba.txt", "r");
   //TAM MOTIVO
   fscanf(fichero, "%d", &tamMotivo);
   motivo = (char*)malloc(tamMotivo*sizeof(char));
@@ -83,7 +83,7 @@ int main(int argc, char const *argv[]){
   //S[1] = 2;
   //S[2] = 3;
   //S[3] = 2;
-
+  //S[4] = 0;
   //int score = calcularScore(S);
   //printf("%d\n",score );
 
@@ -159,17 +159,13 @@ int calcularScore(int* s){ //en s vienen los numeros
   int **matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
   for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
 
+
   for (int i = 0; i < SIZE_UNIVERSO; i++) {
       for(int j = 0; j < tamMotivo; j++){
           matrizPerfiles[i][j] = 0;
       }
   }
 
-  for (int i = 0; i < numCadenasADN; i++){
-    for (int j = 0; j < tamMotivo; j++){
-      matrizPerfiles[i][j] = 0;
-    }
-  }
 
 
   int inicioExtraccion = 0;
