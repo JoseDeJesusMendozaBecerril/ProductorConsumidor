@@ -29,8 +29,8 @@ int hechosP=0,hechosC,totales;
 int tamBuffer=10000000;
 
 struct Queue* buffer;
-sem_t empty,full,mutex;
-
+sem_t empty,full;
+sem_t mutex[3];
 
 //Variables compartidas
 int bestScore;
@@ -45,7 +45,7 @@ int main(int argc, char const *argv[]){
   buffer=createQueue(tamBuffer);
   sem_init(&empty,0,tamBuffer);
   sem_init(&full,0,1);
-  sem_init(&mutex,0,1);
+  for (int i = 0; i < 3; i++) sem_init(&mutex[i],0,1);
 
   if(argc>1) fichero = fopen(argv[1], "r");
   else fichero = fopen("datosPrueba.txt", "r");
@@ -99,7 +99,7 @@ int main(int argc, char const *argv[]){
 
   sem_destroy(&empty);
   sem_destroy(&full);
-  sem_destroy(&mutex);
+  for (int i = 0; i < 3; i++) sem_destroy(&mutex[i]);
 
       return 0;
 }
@@ -113,7 +113,7 @@ void generaS(int* a, int t, int start, int n){
     if(hechosP!=totales){
       hechosP++;
       sem_wait(&empty); // - SE DUERME SI SE HACE NEGATIVO , SI SE LLENA NO HAY VACIOS ENTONCES SE BLOQUEA
-      sem_wait(&mutex); // - BLOQUEO
+      sem_wait(&mutex[0]); // - BLOQUEO
       int* new=(int*)malloc(t*sizeof(int));
       memcpy(new,a,t*sizeof(int));
       //for(int i=0;i<t;i++) printf("%d", new[i]);
@@ -121,7 +121,7 @@ void generaS(int* a, int t, int start, int n){
       while (isFull(buffer));
       enqueue(buffer,new);
       //dequeue(buffer);
-      sem_post(&mutex); // + DEBLOQUEO
+      sem_post(&mutex[0]); // + DEBLOQUEO
       sem_post(&full);  // +
       //sale de cola
     }
@@ -196,11 +196,11 @@ int calcularScore(int* s){ //en s vienen los numeros
 
   for(int i = 0; i < SIZE_UNIVERSO; i++){
     for(int j = 0; j < tamMotivo; j++){
-      sem_wait(&mutex); //mutex lock
+      sem_wait(&mutex[1]); //mutex lock
       if(matrizPerfiles[i][j] > perfilObtenido[j]){
       perfilObtenido[j] = matrizPerfiles[i][j];
       }
-      sem_post(&mutex); //Mutex unlock
+      sem_post(&mutex[1]); //Mutex unlock
     }
   }
 
@@ -227,12 +227,12 @@ void Consummer(){
  /*
   * Entra a cola para sacar S
   */
-  sem_wait(&mutex);
+  sem_wait(&mutex[2]);
   while (!debeSalir){
-    sem_post(&mutex);
+    sem_post(&mutex[2]);
 
     sem_wait(&full);
-    sem_wait(&mutex);
+    sem_wait(&mutex[2]);
     int* a=dequeue(buffer);
 
     S=(int*)malloc(numCadenasADN*sizeof(int));
@@ -243,7 +243,7 @@ void Consummer(){
     //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
     //printf("_%d_c\n",hechosC);
 
-    sem_post(&mutex);
+    sem_post(&mutex[2]);
     sem_post(&empty);
 
     //imprimirMotivo(S);
@@ -252,26 +252,30 @@ void Consummer(){
 
     //printf("\n");
 
-    sem_wait(&mutex);
+    sem_wait(&mutex[2]);
     if (locScore>bestScore){
       bestScore=locScore;
       printf("BS:_%d",bestScore);
       imprimirMotivo(S);
       printf("\n");
     }
-    sem_post(&mutex);
+    sem_post(&mutex[2]);
 
 
-  sem_wait(&mutex);
+  sem_wait(&mutex[2]);
   if(hechosC==totales) {
     debeSalir=1;
-    sem_post(&mutex);
-    sem_post(&mutex);
-    sem_post(&mutex);
-    sem_post(&mutex);
-    sem_post(&mutex);
+    sem_post(&mutex[2]);
+    sem_post(&mutex[2]);
+    sem_post(&mutex[2]);
+    sem_post(&mutex[2]);
+    sem_post(&mutex[2]);
+
   }
   }
+  
+
+
 
   printf("_%d_c\n",hechosC);
 
