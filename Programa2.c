@@ -44,7 +44,7 @@ int main(int argc, char const *argv[]){
   int t;
   buffer=createQueue(tamBuffer);
   sem_init(&empty,0,tamBuffer);
-  sem_init(&full,0,1);
+  sem_init(&full,0,0);
   for (int i = 0; i < 10; i++) sem_init(&mutex[i],0,1);
 
   if(argc>1) fichero = fopen(argv[1], "r");
@@ -70,7 +70,9 @@ int main(int argc, char const *argv[]){
   for(int i = 0; i < numCadenasADN; i++ ){ for(int j=0; j < tamADN; j++){ printf("%c",cadenasADN[i][j]);}printf("\n" );}
   //Matriz para los mejores resultados de S
   perfilObtenido = (int*) calloc (tamMotivo, sizeof(int)); //se inicializa en 0
-
+  for (int i = 0; i < tamMotivo; i++){ 
+    perfilObtenido[i] = 0;
+  }
   l=tamMotivo;
   n=tamADN;
   t=numCadenasADN;
@@ -95,8 +97,8 @@ int main(int argc, char const *argv[]){
   pthread_t cons[NUM_THREADS];
   for(int i=0;i<NUM_THREADS;i++) pthread_create(&cons[i], NULL,(void*)&Consummer,NULL);
   generaS(S,t,0,n-l+1);
-  for(int i=0;i<NUM_THREADS;i++) pthread_join(cons[i], NULL);
-
+  //for(int i=0;i<NUM_THREADS;i++) pthread_join(cons[i], NULL);
+  while (hechosC!=totales);
   sem_destroy(&empty);
   sem_destroy(&full);
   for (int i = 0; i < 10; i++) sem_destroy(&mutex[i]);
@@ -118,7 +120,6 @@ void generaS(int* a, int t, int start, int n){
       memcpy(new,a,t*sizeof(int));
       //for(int i=0;i<t;i++) printf("%d", new[i]);
       //printf("\n");
-      while (isFull(buffer));
       enqueue(buffer,new);
       //dequeue(buffer);
       sem_post(&mutex[0]); // + DEBLOQUEO
@@ -190,9 +191,9 @@ int calcularScore(int* s){ //en s vienen los numeros
 */
   //Sumar valores para obtener el maximo de cada columna y sacar el score
 //  printf("Valores maximos de cada columna\n");
-  for (int i = 0; i < tamMotivo; i++){
-    perfilObtenido[i] = 0;
-  }
+
+  //Mutex unlock
+
 
   for(int i = 0; i < SIZE_UNIVERSO; i++){
     for(int j = 0; j < tamMotivo; j++){
@@ -227,18 +228,16 @@ void Consummer(){
  /*
   * Entra a cola para sacar S
   */
-  sem_wait(&mutex[2]);
   while (hechosC!=totales){
-    sem_post(&mutex[2]);
 
     sem_wait(&full);
     sem_wait(&mutex[0]);
     int* a=dequeue(buffer);
 
     
-    if(a!=NULL){
       S=a;
       hechosC++;
+    if(a!=NULL){
     }
     //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
     printf("_%d_c\r",hechosC);
@@ -264,7 +263,6 @@ void Consummer(){
       }
 
       sem_post(&mutex[4]);
-    printf("%d\n",hechosC);
     }
 
 
@@ -275,9 +273,7 @@ void Consummer(){
   }
   sem_post(&mutex[5]);
 */
-  sem_wait(&mutex[2]);
   }
-  sem_post(&mutex[2]);
-  printf("_%d_c\n",hechosC);
+  //printf("_%d_c\n",hechosC);
 
 }
