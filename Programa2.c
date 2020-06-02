@@ -8,7 +8,7 @@
 #include "Queue.h"
 
 #define SIZE_UNIVERSO 4
-#define NUM_THREADS 3
+#define NUM_THREADS 4
 
 //Prototipos de funciones
 int calcularScore(int* s );
@@ -25,7 +25,6 @@ int tamMotivo;
 int numCadenasADN;
 char** cadenasADN;
 char* consensus;
-int** matUni;
 int* perfilObtenido;//mejor conjunto de S
 int hechosP=0,hechosC=0,totales;
 int tamBuffer=10000000;
@@ -92,9 +91,6 @@ int main(int argc, char const *argv[]){
   //printf("%d\n",score );
 
 
-
-  matUni = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
-  for(int i=0; i < SIZE_UNIVERSO; i++){ matUni[i] =(int*) calloc(tamMotivo,sizeof(int)); }
   //Empieza productor
   //termina productor
 
@@ -106,35 +102,6 @@ int main(int argc, char const *argv[]){
   sem_destroy(&empty);
   sem_destroy(&full);
   for (int i = 0; i < 10; i++) sem_destroy(&mutex[i]);
-   /*
-  for (int i = 0; i < 10; i++) sem_destroy(&mutex[i]);
-  int** matrizPerfiles=matUni;
-  for(int i=0;i < tamMotivo; i++){
-    int max=0;//ubicación del maximo
-    for(int j=1; j<SIZE_UNIVERSO;j++){
-      if(max<matrizPerfiles[j][i]) 
-        max=j;
-    }
-    switch (max)
-    {
-    case 0:
-      consensus[i]='A';
-      break;
-    case 1:
-     consensus[i]='T';
-      break;
-    case 2:
-      consensus[i]='G';
-      break;
-    case 3:
-      consensus[i]='C';
-      break;
-    }
-  }
-
-  printf("\n___Consensus__  %s\n",consensus);
-*/
-  printf("\n___Consensus__  %s\n",consensus);
 
       return 0;
 }
@@ -233,7 +200,6 @@ int calcularScore(int* s){ //en s vienen los numeros
       sem_wait(&mutex[1]); //mutex lock
       if(matrizPerfiles[i][j] > perfilObtenido[j]){
         perfilObtenido[j] = matrizPerfiles[i][j];
-        matUni[i][j]=matrizPerfiles[i][j];
       }
       sem_post(&mutex[1]); //Mutex unlock
     }
