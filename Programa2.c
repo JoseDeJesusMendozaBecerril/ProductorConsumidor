@@ -24,6 +24,8 @@ int tamADN;
 int tamMotivo;
 int numCadenasADN;
 char** cadenasADN;
+char* consensus;
+int** matUni;
 int* perfilObtenido;//mejor conjunto de S
 int hechosP=0,hechosC=0,totales;
 int tamBuffer=10000000;
@@ -70,12 +72,12 @@ int main(int argc, char const *argv[]){
   for(int i = 0; i < numCadenasADN; i++ ){ for(int j=0; j < tamADN; j++){ printf("%c",cadenasADN[i][j]);}printf("\n" );}
   //Matriz para los mejores resultados de S
   perfilObtenido = (int*) calloc (tamMotivo, sizeof(int)); //se inicializa en 0
-  for (int i = 0; i < tamMotivo; i++){ 
-    perfilObtenido[i] = 0;
-  }
+
   l=tamMotivo;
   n=tamADN;
   t=numCadenasADN;
+  consensus=(char*)malloc((l+1)*sizeof(char));
+  consensus[l]='\0';
   totales=pow ((tamADN - tamMotivo) +1 ,numCadenasADN); //(n-l+1)^t
 
   printf("----------------------------------------------------------\n" );
@@ -91,6 +93,8 @@ int main(int argc, char const *argv[]){
 
 
 
+  matUni = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
+  for(int i=0; i < SIZE_UNIVERSO; i++){ matUni[i] =(int*) calloc(tamMotivo,sizeof(int)); }
   //Empieza productor
   //termina productor
 
@@ -102,6 +106,35 @@ int main(int argc, char const *argv[]){
   sem_destroy(&empty);
   sem_destroy(&full);
   for (int i = 0; i < 10; i++) sem_destroy(&mutex[i]);
+   /*
+  for (int i = 0; i < 10; i++) sem_destroy(&mutex[i]);
+  int** matrizPerfiles=matUni;
+  for(int i=0;i < tamMotivo; i++){
+    int max=0;//ubicación del maximo
+    for(int j=1; j<SIZE_UNIVERSO;j++){
+      if(max<matrizPerfiles[j][i]) 
+        max=j;
+    }
+    switch (max)
+    {
+    case 0:
+      consensus[i]='A';
+      break;
+    case 1:
+     consensus[i]='T';
+      break;
+    case 2:
+      consensus[i]='G';
+      break;
+    case 3:
+      consensus[i]='C';
+      break;
+    }
+  }
+
+  printf("\n___Consensus__  %s\n",consensus);
+*/
+  printf("\n___Consensus__  %s\n",consensus);
 
       return 0;
 }
@@ -191,15 +224,16 @@ int calcularScore(int* s){ //en s vienen los numeros
 */
   //Sumar valores para obtener el maximo de cada columna y sacar el score
 //  printf("Valores maximos de cada columna\n");
-
-  //Mutex unlock
-
+  for (int i = 0; i < tamMotivo; i++){
+    perfilObtenido[i] = 0;
+  }
 
   for(int i = 0; i < SIZE_UNIVERSO; i++){
     for(int j = 0; j < tamMotivo; j++){
       sem_wait(&mutex[1]); //mutex lock
       if(matrizPerfiles[i][j] > perfilObtenido[j]){
-      perfilObtenido[j] = matrizPerfiles[i][j];
+        perfilObtenido[j] = matrizPerfiles[i][j];
+        matUni[i][j]=matrizPerfiles[i][j];
       }
       sem_post(&mutex[1]); //Mutex unlock
     }
@@ -212,6 +246,7 @@ int calcularScore(int* s){ //en s vienen los numeros
     //printf("%d ",perfilObtenido[i] );
     puntaje+=perfilObtenido[i];
   }
+  
   //printf("\n" );
 
 
@@ -228,16 +263,18 @@ void Consummer(){
  /*
   * Entra a cola para sacar S
   */
+  sem_wait(&mutex[2]);
   while (hechosC!=totales){
+    sem_post(&mutex[2]);
 
     sem_wait(&full);
     sem_wait(&mutex[0]);
     int* a=dequeue(buffer);
 
     
+    if(a!=NULL){
       S=a;
       hechosC++;
-    if(a!=NULL){
     }
     //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
     printf("_%d_c\r",hechosC);
@@ -273,7 +310,9 @@ void Consummer(){
   }
   sem_post(&mutex[5]);
 */
+  sem_wait(&mutex[2]);
   }
+  sem_post(&mutex[2]);
   //printf("_%d_c\n",hechosC);
 
 }
