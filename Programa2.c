@@ -8,7 +8,7 @@
 #include "Queue.h"
 
 #define SIZE_UNIVERSO 4
-#define NUM_THREADS 4
+#define NUM_THREADS 2
 
 //Prototipos de funciones
 int calcularScore(int* s );
@@ -248,7 +248,7 @@ void Consummer(){
       hechosC++;
     }
     //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
-    printf("_%d_c\r",hechosC);
+    //printf("_%d_c\r",hechosC);
 
     sem_post(&mutex[0]);
     sem_post(&empty);
@@ -266,9 +266,9 @@ void Consummer(){
       if (locScore>bestScore){
         bestScore=locScore;
         memcpy(perfilObtenido,S,numCadenasADN*sizeof(int));
-        printf("\nBS:_%d",locScore);
-        imprimirMotivo(S);
-        printf("\n");
+      //  printf("\nBS:_%d",locScore);
+        //imprimirMotivo(S);
+        //printf("\n");
       }
       
 
