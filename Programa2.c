@@ -70,7 +70,7 @@ int main(int argc, char const *argv[]){
   printf("Cadenas de ADN\n");
   for(int i = 0; i < numCadenasADN; i++ ){ for(int j=0; j < tamADN; j++){ printf("%c",cadenasADN[i][j]);}printf("\n" );}
   //Matriz para los mejores resultados de S
-  perfilObtenido = (int*) calloc (tamMotivo, sizeof(int)); //se inicializa en 0
+  perfilObtenido = (int*) calloc (numCadenasADN, sizeof(int)); //se inicializa en 0
 
   l=tamMotivo;
   n=tamADN;
@@ -102,7 +102,9 @@ int main(int argc, char const *argv[]){
   sem_destroy(&empty);
   sem_destroy(&full);
   for (int i = 0; i < 10; i++) sem_destroy(&mutex[i]);
-
+  printf("\n\nConjunto S obtenido: ");
+  imprimirMotivo(perfilObtenido);
+  printf("\n");
       return 0;
 }
 
@@ -159,7 +161,7 @@ void imprimirMotivo(int* s){
 int calcularScore(int* s){ //en s vienen los numeros
   int **matrizPerfiles = (int**) calloc (SIZE_UNIVERSO ,sizeof(int *));
   for(int i=0; i < SIZE_UNIVERSO; i++){ matrizPerfiles[i] =(int*) calloc(tamMotivo,sizeof(int)); }
-
+  int *perfil= (int*) calloc (tamMotivo, sizeof(int));
 
   for (int i = 0; i < SIZE_UNIVERSO; i++) {
       for(int j = 0; j < tamMotivo; j++){
@@ -192,14 +194,14 @@ int calcularScore(int* s){ //en s vienen los numeros
   //Sumar valores para obtener el maximo de cada columna y sacar el score
 //  printf("Valores maximos de cada columna\n");
   for (int i = 0; i < tamMotivo; i++){
-    perfilObtenido[i] = 0;
+    perfil[i] = 0;
   }
 
   for(int i = 0; i < SIZE_UNIVERSO; i++){
     for(int j = 0; j < tamMotivo; j++){
       sem_wait(&mutex[1]); //mutex lock
-      if(matrizPerfiles[i][j] > perfilObtenido[j]){
-        perfilObtenido[j] = matrizPerfiles[i][j];
+      if(matrizPerfiles[i][j] > perfil[j]){
+        perfil[j] = matrizPerfiles[i][j];
       }
       sem_post(&mutex[1]); //Mutex unlock
     }
@@ -210,10 +212,13 @@ int calcularScore(int* s){ //en s vienen los numeros
   int puntaje = 0;
   for(int i = 0; i < tamMotivo; i++){
     //printf("%d ",perfilObtenido[i] );
-    puntaje+=perfilObtenido[i];
+    puntaje+=perfil[i];
   }
   
   //printf("\n" );
+  free(perfil);
+  for(int i=0; i < SIZE_UNIVERSO; i++){ free(matrizPerfiles[i]);}
+  free(matrizPerfiles);
 
 
   return puntaje;
@@ -222,7 +227,7 @@ int calcularScore(int* s){ //en s vienen los numeros
 
 void Consummer(){
     //Arreglo para maximos de perfilesAlineados
-  int* maximos = calloc (tamMotivo ,sizeof(int));
+  //int* maximos = calloc (tamMotivo ,sizeof(int));
   int* S; //Este es el que se va recorriendo
   // Matriz temporal para perfilesAlineados
 
@@ -260,22 +265,19 @@ void Consummer(){
       sem_wait(&mutex[4]);
       if (locScore>bestScore){
         bestScore=locScore;
+        memcpy(perfilObtenido,S,numCadenasADN*sizeof(int));
         printf("\nBS:_%d",locScore);
         imprimirMotivo(S);
         printf("\n");
       }
+      
 
       sem_post(&mutex[4]);
     }
 
+    free(S);
 
-/*  sem_wait(&mutex[5]);
-  if(hechosC==totales) {
-    printf("--\n");  
-    debeSalir=1;
-  }
-  sem_post(&mutex[5]);
-*/
+
   sem_wait(&mutex[2]);
   }
   sem_post(&mutex[2]);
