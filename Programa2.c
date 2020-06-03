@@ -27,7 +27,7 @@ char** cadenasADN;
 char* consensus;
 int* perfilObtenido;//mejor conjunto de S
 int hechosP=0,hechosC=0,totales;
-int tamBuffer=10000000;
+int tamBuffer=10;
 
 struct Queue* buffer;
 sem_t empty,full;
@@ -241,15 +241,10 @@ void Consummer(){
     sem_wait(&full);
     sem_wait(&mutex[0]);
     int* a=dequeue(buffer);
-
-    
     if(a!=NULL){
       S=a;
       hechosC++;
     }
-    //for(int i=0;i<numCadenasADN;i++) printf("%d", S[i]);
-    printf("_%d_c\r",hechosC);
-
     sem_post(&mutex[0]);
     sem_post(&empty);
 
