@@ -1,20 +1,5 @@
-8
-AGAGAGGC
-20
-7
-        v      v
-TTGTCCAGAGAGAGGTACTT
-       v      v
-CGCTCGTAGAGAGGAGGGTC
-      v      v
-GGGTATAGAGAGGCTATCGC
-           v      v
-TCGCGCCCCAAAGAGAGGCG
-      v      v
-GCAGTAAGAGCCGCATCAAA
-           v      v
-TGACCACCACCAGTGAGGCA
-        v      v
-GCGGGTCGACAGAGGCCAAA
 
+Usage: > ./motif motif_length dna_length n_sequences n_mutations (¿marcas?)
+
+	 Para que salgan marcas que indiquen en que parte de las secuencias está el patrón oculto, como último parámetro pongan una M.
 
